@@ -1,14 +1,16 @@
 package com.example.auladm;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import com.example.auladm.control.GetResponse;
 import com.example.auladm.control.VolleyCallback;
+import com.example.auladm.models.Todo;
 import com.example.auladm.models.User;
 
 import org.json.JSONArray;
@@ -18,49 +20,51 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class Activity3 extends AppCompatActivity {
+
+    List<Todo> todos = new ArrayList<>();
     private GetResponse getResponse = new GetResponse(this);
-    private List<User> users = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_3);
 
-        TextView jsonText = findViewById(R.id.jsonText);
-        Button nextScreen = findViewById(R.id.btNext);
-
-
-        nextScreen.setOnClickListener(view -> {
-            Intent intent = new Intent(getApplicationContext(), Activity3.class);
-            startActivity(intent);
-        });
+        TextView jsonText = findViewById(R.id.jsonText2);
+        Button nextScreen = findViewById(R.id.btNext2);
+        Button btn = findViewById(R.id.btBuscaTodos2);
 
 
-        Button btn = findViewById(R.id.btBuscaTodos);
+//        nextScreen.setOnClickListener(view -> {
+//            Intent intent = new Intent(getApplicationContext(), Activity4.class);
+//            startActivity(intent);
+//        });
+
+
+
         btn.setOnClickListener(view -> {
-            getResponse.requisicao("users", new VolleyCallback() {
+            getResponse.requisicao("todos", new VolleyCallback() {
                 @Override
                 public void onSuccess(JSONArray result) {
                     for (int i = 0; i < result.length(); i++){
                         try {
                             JSONObject json = result.getJSONObject(i);
 
-                            User user = new User(
+                            Todo todo = new Todo(
+                                    json.getInt("userId"),
                                     json.getInt("id"),
-                                    json.getString("name"),
-                                    json.getString("username"),
-                                    json.getString("email"));
-                            users.add(user);
+                                    json.getString("title"),
+                                    json.getBoolean("completed"));
+                            todos.add(todo);
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
                     }
-                    jsonText.setText(users.toString());
+                    jsonText.setText(todos.toString());
                 }
 
                 @Override
                 public void onError(String errorMessage) {
-                    Toast.makeText(MainActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Activity3.this, errorMessage, Toast.LENGTH_SHORT).show();
                 }
             });
         });

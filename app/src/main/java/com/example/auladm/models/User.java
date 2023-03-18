@@ -50,6 +50,6 @@ public class User {
     @NonNull
     @Override
     public String toString() {
-        return "Nome: " + name + "; id: " + id +"\n";
+        return "\nNome: " + name + "; id: " + id;
     }
 }
